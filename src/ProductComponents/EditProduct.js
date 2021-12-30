@@ -35,7 +35,7 @@ function EditProduct() {
      console.log(error)
    }
 
- },[someProp])
+ },[params.id])
 
 
     return (
