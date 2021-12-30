@@ -25,7 +25,7 @@ function EditProduct() {
         console.log(error)
       }
    }
- })
+ },[])
  useEffect(async () => {
    try {
      let userData = await fetch(`https://61937d32d3ae6d0017da85fd.mockapi.io/createProduct/${params.id}`)
