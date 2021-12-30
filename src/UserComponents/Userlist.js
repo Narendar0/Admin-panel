@@ -7,7 +7,7 @@ function Userlist() {
   const [users, setUsers] = useState([])
   useEffect(async () => {
     getUsers();
-  }, [])
+  })
    
   async function getUsers(){
     try {
