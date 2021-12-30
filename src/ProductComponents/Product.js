@@ -7,7 +7,7 @@ function Product() {
   const [products, setProducts] = useState([])
   useEffect(async () => {
     getProduct();
-  })
+  }, [])
    
   async function getProduct(){
     try {

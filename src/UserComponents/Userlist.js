@@ -1,75 +1,68 @@
-import React from 'react'
-import { Link } from "react-router-dom"
-import { useState,useEffect } from 'react'
+import React, { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import {useFormik} from 'formik';
 
-
-function Userlist() {
-  const [users, setUsers] = useState([])
-  useEffect(async () => {
-    getUsers();
+function Edituser() {
+  let params = useParams()
+  const formik = useFormik({
+    initialValues : {
+      firstname : '',
+      lastname : '',
+      email : ''
+    },
+    onSubmit :async values => {
+       try {
+         await fetch(`https://61937d32d3ae6d0017da85fd.mockapi.io/createUser/${params.id}`,{
+         method : "PUT",
+         body : JSON.stringify(values),
+         headers : {
+           "Content-type" : "application/json"
+         }
+       })
+       alert('Data Updated Successfully')
+       } catch (error) {
+         console.log(error)
+       }
+    }
   })
-   
-  async function getUsers(){
+  useEffect(async () => {
     try {
-      let items = await fetch(`https://61937d32d3ae6d0017da85fd.mockapi.io/createUser`)
-      let userData = await items.json()
-      setUsers(userData)
+      let userData = await fetch(`https://61937d32d3ae6d0017da85fd.mockapi.io/createUser/${params.id}`)
+      let user =await userData.json()
+      formik.setValues(user)
     } catch (error) {
       console.log(error)
     }
-  }
 
-  const deleteUser = ( async (id) => {
-    try {
-      if(window.confirm('Are you sure want to delete')){
-      await fetch(`https://61937d32d3ae6d0017da85fd.mockapi.io/createUser/${id}`,{
-      method : "DELETE",
-      headers : {
-        "Content-type" : "application/json"
-      }
-    })}
-    } catch (error) {
-      console.log(error)
-    }
-    getUsers();
- })
-
+  },[])
 
     return (
-       <>
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 id="head" class="h3 mb-0 text-gray-800">Userlist</h1>
-    <Link to='/createuser' class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-            class="fas fa-plus fa-lg text-white-50"></i>Create User</Link>
-    </div>
-    <table class="table table-bordered">
-  <thead>
-    <tr>
-      <th scope="col">No</th>
-      <th scope="col">First Name</th>
-      <th scope="col">Last Name</th>
-      <th scope="col">Email</th>
-      <th scope="col" colSpan="2">Actions</th>
-
-    </tr>
-  </thead>
-  <tbody>
-    {
-      users.map((user, index) => {
-        return <tr key={index}>
-        <th>{user.id}</th>
-        <td>{user.firstname}</td>
-        <td>{user.lastname}</td>
-        <td>{user.email}</td>
-        <td><Link to={`/edituser/${user.id}`} class="btn btn-info">Edit User</Link></td>
-        <td><button onClick={() => deleteUser(user.id)} class="btn btn-danger">Delete User</button></td>
-      </tr>
-      })
-    }
-  </tbody>
-</table>
-       </>
+        <div>
+            <h3 className='header'>Edit User</h3>
+            <form className='userForm' onSubmit = {formik.handleSubmit}>
+               
+  <div class="form-group">
+    <label for="firstname">First Name</label>
+    <input type="text" class="form-control" id="firstname" placeholder="Enter First Name...."
+    onChange = {formik.handleChange} value={formik.values.firstname} />
+    
+  </div>
+  <div class="form-group">
+    <label for="lastname">Last Name</label>
+    <input type="text" class="form-control" id="lastname"  placeholder="Enter Last Name...."
+     onChange = {formik.handleChange} value={formik.values.lastname}/>
+    
+  </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Email address</label>
+    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email...."
+    onChange = {formik.handleChange} value={formik.values.email}/>
+  </div>
+   
+  <button type="submit" class="btn btn-info">Confirm Edit User</button>
+</form>
+        </div>
     )
 }
 
-export default Userlist
+export default Edituser
